@@ -1,0 +1,40 @@
+##-- CHANGE FileSystem Permission/group after mounted
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.mp_root }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.mp_gridhome }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.mp_gridstage }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+##-- CREATE SUB DIR FOR ORACLE
+
+  - name: Criar FileSystem para GRID_BASE
+    ansible.builtin.file:
+       dest: '{{ grid19c_restart.mp_gridbase }}'
+       state: directory
+       owner: '{{ grid19c_restart.grid_user }}'
+       group: '{{ grid19c_restart.grid_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para GRID_INVENTORY
+    ansible.builtin.file:
+       dest: '{{ grid19c_restart.mp_inventory }}'
+       state: directory
+       owner: '{{ grid19c_restart.grid_user }}'
+       group: '{{ grid19c_restart.grid_group }}'
+       mode: '0755'

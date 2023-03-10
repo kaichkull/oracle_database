@@ -1,0 +1,6 @@
+## -- CREATE VG FOR ORACLE db HOME
+  - name: Create a volume group on top of ** database_options.vg_disk ** and resize the volume group to the maximum possible
+    community.general.lvg:
+       vg: '{{ database_options.lvg_ora }}'
+       pvs: '{{ database_options.vg_disk }}'
+       pvresize: yes

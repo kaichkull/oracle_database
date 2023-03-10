@@ -1,0 +1,127 @@
+
+## -- CREATE LVM FOR ORACLE GRID RESTART
+
+  - name: Create a logical volume of 10G Root /oracle
+    community.general.lvol:
+       vg: '{{ grid19c_restart.lvg_ora }}'
+       lv: lv_ora_root
+       size: '{{ grid19c_restart.mp_root_size }}'
+
+  - name: Create a logical volume of 40G /oracle/grid
+    community.general.lvol:
+       vg: '{{ grid19c_restart.lvg_ora }}'
+       lv: lv_ora_gridhome
+       size: '{{ grid19c_restart.mp_gridhome_size }}'
+
+  - name: Create a logical volume of 40G /oracle/stage
+    community.general.lvol:
+       vg: '{{ grid19c_restart.lvg_ora }}'
+       lv: lv_ora_stage
+       size: '{{ grid19c_restart.mp_gridstage_size }}'
+
+## -- CREATE EXT4 FILESYSTEM ON EACH VG
+
+  - name: Create a ext4 filesystem on VG_ORA for ogical volume lv_ora_root
+    community.general.filesystem:
+       fstype: ext4
+       dev: '/dev/{{ grid19c_restart.lvg_ora }}/lv_ora_root'
+
+  - name: Create a ext4 filesystem on VG_ORA for ogical volume lv_ora_grid
+    community.general.filesystem:
+       fstype: ext4
+       dev: '/dev/{{ grid19c_restart.lvg_ora }}/lv_ora_gridhome'
+
+  - name: Create a ext4 filesystem on VG_ORA for ogical volume lv_ora_stage
+    community.general.filesystem:
+       fstype: ext4
+       dev: '/dev/{{ grid19c_restart.lvg_ora }}/lv_ora_stage'
+
+## -- CREATE MOUNT POINT FOR EACH LV
+
+  - name: Criar FileSystem para GRID_ROOT
+    ansible.builtin.file:
+       dest: '{{ grid19c_restart.mp_root }}'
+       state: directory
+       owner: '{{ grid19c_restart.grid_user }}'
+       group: '{{ grid19c_restart.grid_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para GRID_HOME
+    ansible.builtin.file:
+       dest: '{{ grid19c_restart.mp_gridhome }}'
+       state: directory
+       owner: '{{ grid19c_restart.grid_user }}'
+       group: '{{ grid19c_restart.grid_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para STAGE BINARIOS
+    ansible.builtin.file:
+      dest: '{{ grid19c_restart.mp_gridstage }}'
+      state: directory
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+##  -- MOUNT FSs
+
+  - name: Mount Volume Filesystem /oracle
+    ansible.posix.mount:
+       path: '{{ grid19c_restart.mp_root }}'
+       src: '/dev/{{ grid19c_restart.lvg_ora }}/lv_ora_root'
+       state: mounted
+       fstype: ext4
+
+  - name: Mount volumes Filesystems
+    ansible.posix.mount:
+       path: '{{ grid19c_restart.mp_gridhome }}'
+       src: '/dev/{{ grid19c_restart.lvg_ora }}/lv_ora_gridhome'
+       state: mounted
+       fstype: ext4
+
+  - name: Mount volumes Filesystems
+    ansible.posix.mount:
+       path: '{{ grid19c_restart.mp_gridstage }}'
+       src: '/dev/{{ grid19c_restart.lvg_ora }}/lv_ora_stage'
+       state: mounted
+       fstype: ext4
+
+##-- CHANGE FileSystem Permission/group after mounted
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.mp_root }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.mp_gridhome }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.mp_gridstage }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0755'
+
+##-- CREATE SUB DIR FOR ORACLE
+
+  - name: Criar FileSystem para GRID_BASE
+    ansible.builtin.file:
+       dest: '{{ grid19c_restart.mp_gridbase }}'
+       state: directory
+       owner: '{{ grid19c_restart.grid_user }}'
+       group: '{{ grid19c_restart.grid_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para GRID_INVENTORY
+    ansible.builtin.file:
+       dest: '{{ grid19c_restart.mp_inventory }}'
+       state: directory
+       owner: '{{ grid19c_restart.grid_user }}'
+       group: '{{ grid19c_restart.grid_group }}'
+       mode: '0755'

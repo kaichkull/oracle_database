@@ -1,0 +1,127 @@
+
+## -- CREATE LVM FOR ORACLE db RESTART
+
+  - name: Create a logical volume of 10G Root /oracle
+    community.general.lvol:
+       vg: '{{ database_options.lvg_ora }}'
+       lv: lv_ora_root
+       size: '{{ database_options.mp_root_size }}'
+
+  - name: Create a logical volume of 40G /oracle/db
+    community.general.lvol:
+       vg: '{{ database_options.lvg_ora }}'
+       lv: lv_ora_dbhome
+       size: '{{ database_options.mp_dbhome_size }}'
+
+  - name: Create a logical volume of 40G /oracle/stage
+    community.general.lvol:
+       vg: '{{ database_options.lvg_ora }}'
+       lv: lv_ora_stage
+       size: '{{ database_options.mp_dbstage_size }}'
+
+## -- CREATE EXT4 FILESYSTEM ON EACH VG
+
+  - name: Create a ext4 filesystem on VG_ORA for ogical volume lv_ora_root
+    community.general.filesystem:
+       fstype: ext4
+       dev: '/dev/{{ database_options.lvg_ora }}/lv_ora_root'
+
+  - name: Create a ext4 filesystem on VG_ORA for ogical volume lv_ora_db
+    community.general.filesystem:
+       fstype: ext4
+       dev: '/dev/{{ database_options.lvg_ora }}/lv_ora_dbhome'
+
+  - name: Create a ext4 filesystem on VG_ORA for ogical volume lv_ora_stage
+    community.general.filesystem:
+       fstype: ext4
+       dev: '/dev/{{ database_options.lvg_ora }}/lv_ora_stage'
+
+## -- CREATE MOUNT POINT FOR EACH LV
+
+  - name: Criar FileSystem para db_ROOT
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_root }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para db_HOME
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_dbhome }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para STAGE BINARIOS
+    ansible.builtin.file:
+      dest: '{{ database_options.mp_dbstage }}'
+      state: directory
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+##  -- MOUNT FSs
+
+  - name: Mount Volume Filesystem /oracle
+    ansible.posix.mount:
+       path: '{{ database_options.mp_root }}'
+       src: '/dev/{{ database_options.lvg_ora }}/lv_ora_root'
+       state: mounted
+       fstype: ext4
+
+  - name: Mount volumes Filesystems
+    ansible.posix.mount:
+       path: '{{ database_options.mp_dbhome }}'
+       src: '/dev/{{ database_options.lvg_ora }}/lv_ora_dbhome'
+       state: mounted
+       fstype: ext4
+
+  - name: Mount volumes Filesystems
+    ansible.posix.mount:
+       path: '{{ database_options.mp_dbstage }}'
+       src: '/dev/{{ database_options.lvg_ora }}/lv_ora_stage'
+       state: mounted
+       fstype: ext4
+
+##-- CHANGE FileSystem Permission/group after mounted
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ database_options.mp_root }}'
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ database_options.mp_dbhome }}'
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ database_options.mp_dbstage }}'
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+##-- CREATE SUB DIR FOR ORACLE
+
+  - name: Criar FileSystem para db_BASE
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_dbbase }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para db_INVENTORY
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_inventory }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'

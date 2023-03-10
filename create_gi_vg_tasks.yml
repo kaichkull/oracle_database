@@ -1,0 +1,6 @@
+## -- CREATE VG FOR ORACLE GRID HOME
+  - name: Create a volume group on top of ** grid19c_restart.vg_disk ** and resize the volume group to the maximum possible
+    community.general.lvg:
+       vg: '{{ grid19c_restart.lvg_ora }}'
+       pvs: '{{ grid19c_restart.vg_disk }}'
+       pvresize: yes

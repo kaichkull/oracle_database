@@ -1,0 +1,40 @@
+
+  - name: Create group  'OINSTALL / DBA'
+    group:
+     name: '{{ grid19c_restart.grid_group }}'
+     state: present
+
+  - name: Create group  'OSOPER'
+    group:
+     name: '{{ grid19c_restart.asm_osoper }}'
+     state: present
+
+  - name: Create group  'OSDBA'
+    group:
+     name: '{{ grid19c_restart.asm_osdba }}'
+     state: present
+
+  - name: Create group  'OSASM'
+    group:
+     name: '{{ grid19c_restart.asm_osasm }}'
+     state: present
+
+  - name: Create User 'ORACLE'
+    user:
+     name: '{{ grid19c_restart.grid_user }}'
+     create_home: yes
+     home: '/home/{{ grid19c_restart.grid_user }}'
+     comment: "grid user owner"
+     group: '{{ grid19c_restart.grid_group }}'
+     groups: '{{ grid19c_restart.asm_osdba }},{{ grid19c_restart.asm_osoper }},{{ grid19c_restart.asm_osasm }}'
+     password: $6$wCOZpENWmO2uNWJi$V2td2NJV6D6RSWugfJd3r9PlCZdE3C7K890vUmh7WA5aRCqbF/bo140SC5X1rLOEpdpD8XYLrThGd0dwSsAi//
+
+  - name: Change Oracle user bashrc to umask 0022
+    lineinansible.builtin.file:
+      dest: "/home/{{ grid19c_restart.grid_user }}/.bashrc"
+      line: "umask 0022"
+
+  - name: Change Oracle user bash_profile to umask 0022
+    lineinansible.builtin.file:
+      dest: "/home/{{ grid19c_restart.grid_user }}/.bash_profile"
+      line: "umask 0022"

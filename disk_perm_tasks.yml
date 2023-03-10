@@ -1,0 +1,8 @@
+##-- CHANGE DISKs ASM Permission/group
+
+  - name: Change DISK owner, group and permissions
+    ansible.builtin.file:
+      path: '{{ grid19c_restart.asm_fisical_disk }}'
+      owner: '{{ grid19c_restart.grid_user }}'
+      group: '{{ grid19c_restart.grid_group }}'
+      mode: '0640'

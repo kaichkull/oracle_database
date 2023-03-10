@@ -1,0 +1,67 @@
+## -- CREATE MOUNT POINT FOR EACH LV
+
+  - name: Criar FileSystem para db_ROOT
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_root }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para db_HOME
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_dbhome }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para STAGE BINARIOS
+    ansible.builtin.file:
+      dest: '{{ database_options.mp_dbstage }}'
+      state: directory
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+
+##-- CHANGE FileSystem Permission/group after mounted
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ database_options.mp_root }}'
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ database_options.mp_dbhome }}'
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: '{{ database_options.mp_dbstage }}'
+      owner: '{{ database_options.db_user }}'
+      group: '{{ database_options.db_group }}'
+      mode: '0755'
+
+##-- CREATE SUB DIR FOR ORACLE
+
+  - name: Criar FileSystem para db_BASE
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_dbbase }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'
+
+  - name: Criar FileSystem para db_INVENTORY
+    ansible.builtin.file:
+       dest: '{{ database_options.mp_inventory }}'
+       state: directory
+       owner: '{{ database_options.db_user }}'
+       group: '{{ database_options.db_group }}'
+       mode: '0755'

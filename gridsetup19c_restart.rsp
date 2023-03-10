@@ -1,0 +1,16 @@
+
+INVENTORY_LOCATION={{ grid19c_restart.mp_inventory }}
+oracle.install.option=HA_CONFIG
+ORACLE_BASE={{ grid19c_restart.mp_gridbase }}
+oracle.install.asm.OSDBA={{ grid19c_restart.grid_group }}
+oracle.install.asm.OSOPER={{ grid19c_restart.grid_group }}
+oracle.install.asm.OSASM={{ grid19c_restart.grid_group }}
+oracle.install.asm.SYSASMPassword= {{ grid19c_restart.asm_sys_pwd }}
+oracle.install.asm.diskGroup.name= {{ grid19c_restart.dg_name }}
+oracle.install.asm.diskGroup.redundancy=EXTERNAL
+oracle.install.asm.diskGroup.disks={{ grid19c_restart.asm_disk }}
+oracle.install.asm.diskGroup.diskDiscoveryString={{ grid19c_restart.asm_dsk_str }}
+oracle.install.asm.monitorPassword={{ grid19c_restart.asm_sys_pwd }}
+oracle.install.asm.gimrDG.name=false
+oracle.install.crs.configureRHPS=false
+
