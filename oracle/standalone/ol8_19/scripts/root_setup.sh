@@ -32,3 +32,8 @@ su - oracle -c 'sh /vagrant/scripts/oracle_create_database.sh'
 su - oracle -c 'sh /vagrant/scripts/ords_software_installation.sh'
 
 sh /vagrant/scripts/oracle_service_setup.sh
+
+
+if [ "${POST_INSTALL}" = "true" ]; then
+su - oracle -c 'sh /vagrant/scripts/database_post_install_setup.sh'
+fi

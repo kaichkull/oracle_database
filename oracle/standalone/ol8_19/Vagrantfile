@@ -61,6 +61,12 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder "/Users/rmastro/Documents/Dynamic/projects/kyndryl/next_scripts/", "/next_scripts", type: "virtualbox"
+
+  # ansible key: keys are stored in setup_my_workstation/ansible_essentals/ansible/ssh_keys
+  # this command will made this single key file available for the server in the time of the provision script
+  config.vm.provision "file", source: "../../../../ansible/ssh_keys/ansible_ssh_key.pub", destination: "$HOME/.ssh/ansible_ssh_key.pub"
+
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -70,7 +76,7 @@ Vagrant.configure("2") do |config|
     vb.memory = var_mem_size
     vb.cpus   = var_cpus
     vb.name   = var_vm_name
-    
+
     vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', '0', '--nonrotational', var_non_rotational]
 
     unless File.exist?(var_disk1_name)
@@ -93,5 +99,6 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sh /vagrant/scripts/setup.sh
+    su - vagrant -c 'cat "$HOME/.ssh/ansible_ssh_key.pub" >> $HOME/.ssh/authorized_keys'
   SHELL
 end
